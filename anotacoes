@@ -1,0 +1,47 @@
+Roteiro do aquecimento PSW 3.0
+* Variaveis
+Primeiro cria-se um ambiente virtual python na sua máquina
+-pra quê precisa disso?
+Ambientes virtuais são copias das instalações dos interpretadores que estão na máquina, por exemplo o python 3.7, pode ser que essa instalação seja  modificada e muitas vezes não queremos que projetos estejam vinculados à instalação principal do compilador/interpretador que temos na máquina que pode ser, por exemplo, atualizada.
+Então para cada projeto que estejamos criando, devemos criar um novo ambiente virtual.
+
+
+python3 -m venv venv
+
+python3: chame o python
+-m: passe parâmetros
+venv: crie um virtualEnv
+venv: nome que eu dou para o meu interpretador python(padrão é venv)
+
+após isso, algumas pastas e subpastas são criadas com várias configurações pré-definidas de um ambiente virtual
+Depois disso precisamos informar que sempre que quisermos rodar um código, este deverá ser feito por meio desta cópia(venv) do interpretador por meio do comando abaixo
+
+source venv/bin/activate (linux)
+venv\scripts\activate(windows)
+
+daí aparece a palavra(venv) para dizer que o venv foi ativado e está rodando
+-Tipos de dados 
+-Entrada de dados
+
+nome = input("Digite o seu nome: ")
+print(f"O seu nome é {nome}")
+ 
+Para outras linguagens de programação que não o python constantes são escritas com letras maiúsculas e não podem ser alteradas após serem definidas, no python mesmo sendo escritas com as letras maiúsculas elas podem ser alteradas a PEP8(guias de estilo) que indica a utilização de letras maiúsculas para constantes para que fique mais fácil apra outros desenvolvedoores consigam ler o código com mais clareza 
+
+Arredondamento de variáveis
+from math import ceil(arredonda para cima), floor(arredonda para baixo) 
+
+-Conversão de dados
+
+print(3+2) ==> 5
+print(3-2) ==> 1
+print(3/2) ==> 1.5
+print(3//2) ==> 1 (divisão por inteiro)
+print(3%2) ==> 1 
+print(3*2) ==> 6
+print(3**2) ==> 9
+print(9**(1/2)) ==> 3
+
+-laço de repetição
+break finaliza  a repetição
+
