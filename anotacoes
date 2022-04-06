@@ -1,3 +1,5 @@
+"O primeiro passo do aprendizado é a confusão"
+
 Roteiro do aquecimento PSW 3.0
 * Variaveis
 Primeiro cria-se um ambiente virtual python na sua máquina
@@ -45,3 +47,130 @@ print(9**(1/2)) ==> 3
 -laço de repetição
 break finaliza  a repetição
 
+
+1) Iniciando o projeto
+
+primeiro vamos instalar o django(framework) e o pillow(biblioteca que o django usa para manipular imagens)
+
+agora precisamos startar o nosso projeto django. A partir do momento que temos o django instalado, basta rodarmos:
+
+
+django-admin startproject freelaway .
+
+Onde são respectivamente comandoDjango inicializaProj nomeDoProjeto pontoQuaMostraOndeComeçaOProj
+
+Após fazer isso o Django cria todo o projeto para nós dentro da pasta nomeDoProjeto, mostrando toda uma estrutura básica independente do qual pequeno ou grande esse projeto seja, por ex:
+
+2)Arquivos do projeto Django
+O settings.py é o arquivo de configuração e é com ele que conseguimos definir algummas configurações básicas do nosso projeto por exemplo:
+DEBUG: que quando estiver 'True' nós estamos em modo de desenvolvimento e quando ela estiver em false, nós já a colocamos em produção 
+ALLOWED_HOSTS: são as máquinas que podem acessa o meu aplicativo 
+SECRET_KEY: utilizada para fazer hash e criptografia 
+DATABASES: Digamos qeu estamos utilizando o MYSQL e de repente precisamos mudar para o POSTGREE ou SQLITE não precisamos mexer em nada do projeto, precisaremos apenas mudar essa variável
+LANGUAGE_CODE: "pt-BR"
+TIME_ZONE: "America/Sao_Paulo"
+
+
+O urls.py é onde definimos as rotas da nossa aplicação exemplo
+
+
+url/login
+url/home
+url/cadastro
+
+Quando acessamos uma determinada rota ele exibe algo de diferente para cada página requerida
+
+O wsgi.py é o web server gate interface usado no deploy da aplicação
+O asgi.py é parecido mas é usado apra uma aplicação assíncrona
+
+e por último temos o manage.py qye é o nosso cli(command line interface) é como se fosse um programa, mas em vez de uma interface gráfica quando pedimos uma ação para o programa , ele executará uma ação dada pela linha de comando.
+Ao executarmos o arquivo manager.py podemos por exemplo inicializar o servidor com o comando runserver:
+
+    $python3 manager.py runserver
+
+ao acessarmos o caminho definido como URI(http://127.0.0.1:8000/) do servidor que está rodando temos acesso a tela do Django quando não tem nada instalado
+
+3) Configurando os arquivos estáticos
+
+
+Devemos copiar as configurações pré-determinada no projeto 
+STATIC_URL = '/static/' #url para acessá-los
+STATICFILES_DIRS = (os.path.join(BASE_DIR, 'templates/static'),) #quais pastas eles vão ficar
+STATIC_ROOT = os.path.join('static')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = '/media/'
+
+Os arquivos estáticos são por exemplo a Logo do sistema, os css, javascripts ou seja os arquivos que não são dinâmicos, que vão estar na aplicação estarão nos arquivos estáticos
+
+
+4 passo - criação de um App (dividir para conquistar)
+
+ Vamos dividir o nosso problema gigante em pequenos problemas, então para cada um dos nossos problemas devemos criar um App, por ex:
+ -login
+ -cadastro
+ -recuperação de senha
+ -listagem dos jobs
+ -perfil do usuário
+
+Para inicializar um App é muito simples, basta digitar o comando
+
+    $python3 manage.py startapp autenticacao (no windows é python)
+
+indicando o nome do app no final
+Quando rodamos o comando acima, o django cria uma nova pasta(autenticacao) no projeto com os arquivos que serão necessários para rodar aquele app. 
+Ao criar um app, devemos informar ao Django da criação deste app nos arquivos 
+
+    * settings.py adicionando na tag Application definition os INSTALLED_APPS
+
+        INSTALLED_APPS = [
+            'django.contrib.admin',                                     #app que já vem como padrão no Django    
+            'django.contrib.auth',                                      #app que já vem como padrão no Django    
+            'django.contrib.contenttypes',                              #app que já vem como padrão no Django            
+            'django.contrib.sessions',                                  #app que já vem como padrão no Django        
+            'django.contrib.messages',                                  #app que já vem como padrão no Django        
+            'django.contrib.staticfiles',                               #app que já vem como padrão no Django            
+            'autenticacao',                                             #app que criamos e adicionamos manualmente
+        ]
+
+    *frewlaway/urls.py - adicionando em urlpatterns criando um caminho para quando o meu usuário acessá-lo ele caia na minha aplicação 
+
+        urlpatterns = [
+            path('admin/', admin.site.urls),                #url padrão do django
+            path('auth/', include('autenticacao.urls'))     #url que adicionamos, mas q ainda não existe na pasta de autenticação, devemos criá-lo
+        ]
+
+    *autenticacao/urls.py - perceba que o arquivo urls.py não existe dentro da pasta autenticacao, logo devemos criá-lo e em criar uma estrutura igual ao urls.py do   freewlaway.
+
+            from django.urls import path
+
+            urlpatterns = [
+            ]
+
+        * note que o problema autenticação ainda é muito grande com cadastro, login, senha, recuperação
+        * quando o usuário acessar meudominio/auth ele acessa o app auth, mas para acessar as subrotas com os subproblemas de auth ele deve acessar outros paths que são derivações do /path e que devem ser colocadas dentro de urls.py de autenticacao/
+        * o django segue um padrão de arquitetura de software chamado mvt(model-view-template)
+            -model: arquivo model onde vai ficar uma camada da aplicação, ou seja um arquivo onde vai ficar separado tudo que for relacionado a conexão,pesquisa, inserção de banco de dados
+            -view: arquivo view, onde vai ficar a lógica da nossa aplicação, onde fica toda aquela parte onde recebemos uma request e retornamos uma response, logo pegar o nome do usuário e verificar se ele existe, ou um e-mail/senha válido/inválido todo esse processamento fica aqui.
+            -template: arquivo template, que pe de fato a interface que o usuário vai receber as informações que no nosso caso, seria o html, onde se tem imagens, botões, campos para o usuário interagir.
+        * Quando um usuário acessa uma rota, eu quero que ele seja redirecionado para uma view que é uma função do python que vai receber uma requisição pedida do usuário e vai devolver um response com o conteúdo do que o usuário pediu como resposta, logo devemos fazer o import do arquivo views para dentro o autenticacao/urls.py
+
+            from django.urls import path
+            from . import views #import do arquivo views
+
+            urlpatterns = [
+                path('cadastro/', views.cadastro, name = 'cadastro') # onde temos:  caminhoDoPath, funçãoDentroDeViews, nomeDaRota
+            ]
+        
+    *autenticacao/views.py - não devemos esquecer de criar a função cadastro dentro da views.py que é a função que deve retornar o response da request no path auth/cadastro
+
+        from django.http import HttpResponse
+
+        def cadastro(request):
+            return HttpResponse('cadastro')
+
+Após isso, rodamos o servidor de novo e podemos testar no navegador outra vez
+Ao acessarmos a página vazio(http://127.0.0.1:8000/) não funciona nada, pois não configuramos para que o django pudesse exibir algo nessa url.
+Se acessarmos a página auth/(http://127.0.0.1:8000/auth/) também não funciona pois não criamos nenhuma view para este caminho, na realidade este caminho só direciona para autenticacao/urls.py 
+Mas perceba que dentro do (http://127.0.0.1:8000/auth/) temos uma outra rota(http://127.0.0.1:8000/auth/cadastro/) que ela sim tem uma view(httpresponse) definida que pode ser exibida 
+
+4 passo - criação de um App Login sozinho
