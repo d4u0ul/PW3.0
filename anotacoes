@@ -192,7 +192,7 @@ para isso, precisamos renderizar o html com uma função que já vem importada
 
     from django.shortcus import render  # dentro de autenticacao/views
 
-Trocando agora a HttpResponse pela função render temos:
+Trocando agora a HttpResponse de views.cadastro() pela função render temos:
 
     def cadastro(request):
         return render(request, 'cadastro.html')
@@ -200,7 +200,102 @@ Trocando agora a HttpResponse pela função render temos:
     Na função render precisamos saber qual foi a requisição do usuário, o caminho do template html('cadastro.html'). 
     Por padrão o django procura esse arquivo html dentro de uma pasta chamada templates(autenticacao/templates/cadastro.html), logo devemos criar a pasta 'templates' e o arquivo 'cadastro.html'
 
+5º passo - Vc já viu que muitos sites têm partes da página que se repetem durante as navegações como barra de navegação e rodapé da página. Isso quer dizer que temos de para todas as páginas dentro do projeto, teremos que criar repetidamente essa parte da página em html? não, para isso criamos um arquivo chamado base.html onde colocamos todas as partes do html que sejam comuns em vários arquivos e no arquivo cadastro.html ou login.html a gnt só estende o base e o padrão fica no base.html e assim não precisamos repetir o mesmo código. 
+
+Para criar um base.html, precisamos criar uma pasta de templates no core do nosso projeto(freewlaway) 
+No arquivo freelaway/settings nós encontramos uma constante chamada TEMPLATES. Essa constante é uma lista de dicionários e em cada dicionário nós temos uma lista chamada DIRS on devemos colocar DIRS =[os.path.join()]. O os.path.join()  basicamente faz uma concatenação das 2 partes que ele está juntando, no caso os 2 caminhos(path), pórem se colocássemos apenas uma concatenação comum (+) teríamos algumas incompatibilidades dependendo do sistema em que o código rodar, por exemplo o linux tem como separador de pastas "/" e o windows "\" o os.path.join() faz essa configuração do jeito certo de se escrever o caminho para nós.
+Assim, devemos concatenar BASE_DIR{que é uma variável do próprio settings que referencia o lugar no OS onde o código está sendo rodado} com a pasta templates na raiz principal do projeto PS3.0/templates
+
+    DIRS = [os.path.join(BASE_DIR,"templates")]
+
+depois disso, criamos a pasta e o arquivo PS3.0/templates/base.html
+para não nos preocuparmos muito com o front end desta parte do projeto, podemos ir diretamente no site do bootstrap getbootstrap.com e pegar um já feito em docs o starter template.
+==============================================================================================================
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    {% block 'head' %} 
+    {% endblock %}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css">
+    <title>{% block 'title' %}{% endblock %}</title>
+</head>
+
+<body class="fundo">
+    {% block 'body' %}{% endblock %}
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js">
+
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
+==============================================================================================================
+
+O código está disponível com algumas pequenas diferenças no pdf. As principais estão nos blocos do django que forma adicionados ao código do bootstrap, sendo eles 
+
+{% block 'head' %}
+
+{% endblock %}
+
+Um block do django é uma tag que tudo que eu quiser colocar nessa tag chamada 'head' ou seja estendê-la de outro lugar ou colocá-la em algum outro lugar, essas tags serão substituídas pelo que eu quero colocar no lugar, por exemplo a tag titile que vai substituir o título
+
+    {% block 'title' %}{% endblock %}
+
+e todo o resto, ele mantém.
+Voltando para o cadastro.html, devemos apagar tudo e mandar ele estender de base.html para não ficar repetindo o código base da aplicação.
+
+    {% extends 'base.html' %}
     
+    e também devemos dizer o que e onde queremos colocar, nesse caso estamos colocando a plavra TESTE no body.
+    {% block 'body' %}
+        <h1>
+        TESTE
+        </h1>
+    {% endblock %}
+
+    além disso tbm podemos definir o título da página com o block title
+
+    {%block 'title'%}
+        Cadastro | freewlaway
+    {%endblock%}
 
 
+
+6ºpasso - desenvolva o cadastro.html 
+Há um exemplo feito no pdf com todos os blocks que precisamos adicionar no cadastro.html
+
+=======================================================================================================
+
+{% extends 'base.html' %}
+{% load static %}
+
+{% block 'head' %}
+<link rel="stylesheet" href="{% static 'autenticacao/css/cadastro.css' %}">
+{% endblock %}
+
+{% block 'body' %}
+<div class="box">
+<form>
+<h1 class="titulo font-degrade borda-bottom-degrade">INSCREVA-SE</h2>
+<br>
+<span class="span-descricao">Nome de usuário:</span>
+<input type="text" class="form-control input-cadastro" name="username">
+<br>
+<span class="span-descricao">Senha:</span>
+<input type="password" class="form-control input-cadastro" name="password">
+<br>
+<span class="span-descricao">Confirmar senha:</span>
+<input type="password" class="form-control input-cadastro" name="confirm-password">
+<br>
+<input type="submit" value="CADASTRAR" class="btn btn-success btn-lg">
+<a href="#" class="btn btn-primary btn-lg">LOGIN</a>
+</form>
+</div>
+{% endblock %}
+
+=======================================================================================================
 
