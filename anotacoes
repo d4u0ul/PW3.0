@@ -299,3 +299,60 @@ Há um exemplo feito no pdf com todos os blocks que precisamos adicionar no cada
 
 =======================================================================================================
 
+7º passo - crie e desenvolva o cadastro.css
+
+O html é o responsável pelo o que que é exibido para o usuário e o css é como que isso será exibido para o usuário, então é lá que definimos a cor de fundo o tamanho das letras, posição, cor de botão etc.
+Dentro de PS3.0/templates crie uma pasta chamada 'static/'
+Lembre-se que dentro de freewlaway/settings.py temos as configurações dos arquivos estáticos e dentre as diretrizes, temos o STATICFILES_DIRS que informa ao django onde ele vai procurar os arquivos estáticos do projeto
+
+    STATICFILES_DIRS = (os.path.join(BASE_DIR, 'templates/static'),)
+
+Logo, quando criamos a pasta static dentro de templates, estamos criando o caminho que o settings estava indicando.
+Dentro de static devemos separar os arquivos estáticos por app e tipo(css,img,js), logo devemos criar dentro da pasta static os caminhos
+
+    templates/static/autenticacao/css
+    templates/static/autenticacao/img
+    templates/static/autenticacao/js
+
+para colocarmos os arquivos correspondentes nestes exatos caminhos.
+
+Criada a estrutura de pastas, criamos o arquivo cadastro.css no caminho correspondentes aos arquivos .css do app autenticacao, ou seja 
+
+    templates/static/autenticacao/css/cadastro.css
+
+Veja que não basta apenas criar o arquivo css numa estrutura bem organizada como esta que está acima, tbm devemos dizer ao arquivo .html onde ele vai buscar o arquivo .css que este irá consumir. Assim, devemos importar o .css para o arquivo html e perceba que já o fizemos quando utilizamos a linha de código do django:
+
+    {% load static %}
+    Essa linha acima, importa o static do settings.py (projeto principal do django) e o esse , por sua vez tem uma tag que diz onde estão os arquivos static do projeto
+
+        STATICFILES_DIRS = (os.path.join(BASE_DIR, 'templates/static'),)
+    
+    Daí, dentro do html, dentro do block 'head' trazemos o link do arquivo css que está em static/autenticacao/css/cadastro.css
+
+        {% block 'head'%}
+            <link rel = "stylesheet" href = "{% static 'autenticacao/css/cadastro.css' %}">
+        {%endblock%}
+
+O arquivo cadastro.css já tem um exemplo que só basta copiar e colocar
+
+===========================================================================================
+
+.fundo{
+background-color: #222;
+color: white;
+}
+.box{
+background-color: #444;
+width: 500px;
+padding: 40px;
+position: absolute;
+top: 50%;
+left: 50%;
+transform: translate(-50%,-50%);
+box-shadow: 0 0px 20px 0 rgba( 255, 207, 0, 0.3 );
+}
+
+===========================================================================================
+
+
+    
