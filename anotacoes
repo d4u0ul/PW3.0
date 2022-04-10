@@ -120,7 +120,7 @@ indicando o nome do app no final
 Quando rodamos o comando acima, o django cria uma nova pasta(autenticacao) no projeto com os arquivos que serão necessários para rodar aquele app. 
 Ao criar um app, devemos informar ao Django da criação deste app nos arquivos 
 
-    * settings.py adicionando na tag Application definition os INSTALLED_APPS
+    * freewlaway/settings.py adicionando na tag Application definition os INSTALLED_APPS
 
         INSTALLED_APPS = [
             'django.contrib.admin',                                     #app que já vem como padrão no Django    
@@ -151,7 +151,7 @@ Ao criar um app, devemos informar ao Django da criação deste app nos arquivos
         * o django segue um padrão de arquitetura de software chamado mvt(model-view-template)
             -model: arquivo model onde vai ficar uma camada da aplicação, ou seja um arquivo onde vai ficar separado tudo que for relacionado a conexão,pesquisa, inserção de banco de dados
             -view: arquivo view, onde vai ficar a lógica da nossa aplicação, onde fica toda aquela parte onde recebemos uma request e retornamos uma response, logo pegar o nome do usuário e verificar se ele existe, ou um e-mail/senha válido/inválido todo esse processamento fica aqui.
-            -template: arquivo template, que pe de fato a interface que o usuário vai receber as informações que no nosso caso, seria o html, onde se tem imagens, botões, campos para o usuário interagir.
+            -template: arquivo template, que é de fato a interface que o usuário vai receber as informações que no nosso caso, seria o html, onde se tem imagens, botões, campos para o usuário interagir.
         * Quando um usuário acessa uma rota, eu quero que ele seja redirecionado para uma view que é uma função do python que vai receber uma requisição pedida do usuário e vai devolver um response com o conteúdo do que o usuário pediu como resposta, logo devemos fazer o import do arquivo views para dentro o autenticacao/urls.py
 
             from django.urls import path
@@ -163,14 +163,44 @@ Ao criar um app, devemos informar ao Django da criação deste app nos arquivos
         
     *autenticacao/views.py - não devemos esquecer de criar a função cadastro dentro da views.py que é a função que deve retornar o response da request no path auth/cadastro
 
-        from django.http import HttpResponse
+        from django.http import HttpResponse #é preciso iportar o response da função cadastro
 
         def cadastro(request):
             return HttpResponse('cadastro')
 
+Vamos ver se está funcionando:
 Após isso, rodamos o servidor de novo e podemos testar no navegador outra vez
 Ao acessarmos a página vazio(http://127.0.0.1:8000/) não funciona nada, pois não configuramos para que o django pudesse exibir algo nessa url.
 Se acessarmos a página auth/(http://127.0.0.1:8000/auth/) também não funciona pois não criamos nenhuma view para este caminho, na realidade este caminho só direciona para autenticacao/urls.py 
 Mas perceba que dentro do (http://127.0.0.1:8000/auth/) temos uma outra rota(http://127.0.0.1:8000/auth/cadastro/) que ela sim tem uma view(httpresponse) definida que pode ser exibida 
 
-4 passo - criação de um App Login sozinho
+4 passo - criação sozinho de uma rota login
+
+    add uma nova urlpattern em autenticacao/urls.py para a rota login/
+
+        urlpatterns=[
+            ...
+            path('login/', login.views, name='login'),
+        ]
+    add uma nova função em views chamada login que retorna o response da chamada no link /auth/login/
+
+        def login(request):
+            return HttpResponse('login')
+
+Perceba que até agora nós apenas retornamos strings nas requests, mas num projeto real o que queremos retornar são páginas e elementos web.
+para isso, precisamos renderizar o html com uma função que já vem importada 
+
+    from django.shortcus import render  # dentro de autenticacao/views
+
+Trocando agora a HttpResponse pela função render temos:
+
+    def cadastro(request):
+        return render(request, 'cadastro.html')
+
+    Na função render precisamos saber qual foi a requisição do usuário, o caminho do template html('cadastro.html'). 
+    Por padrão o django procura esse arquivo html dentro de uma pasta chamada templates(autenticacao/templates/cadastro.html), logo devemos criar a pasta 'templates' e o arquivo 'cadastro.html'
+
+    
+
+
+
