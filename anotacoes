@@ -354,5 +354,113 @@ box-shadow: 0 0px 20px 0 rgba( 255, 207, 0, 0.3 );
 
 ===========================================================================================
 
+8º passo - alterar a view para diferenciar GET e POST :
 
+Basicamente, o HTTP que é o protocolo que define como que os websites se comportam através de chamadas de request e response. O HTTP define alguns verbos de ação, tais como: 
+
+    -GET: é quando fazemos requisições via URL do nosso navegador, qando fazemos requisições, normalmente queremos como resposta um arquivo html para podermos exibi-lo para o usuário que fez o request.
+    -POST: Quando fazemos uma requisição via POST que é um tipo de requisição feita com formulário, aí não queremos receber uma página html, mas sim queremos fazer algum processamento com as informações que vêm no formulário, tais como mudar um registro num BD ou guardar o valor de uma variável para ser utilizada no processamento de alguma informação que será exibida logo após. 
+    -PUT:  
+    -DELETE
+
+
+Uma função que verifica se o request que estamos fazendo é um get ou um post deve verificar o tipo de requisição e de acordo com o tipo feito deve tomar uma atitude. Há m exemplo no pdf de apoio, como está abaixo:
+
+def cadastro(request):
+    if request.method == "GET":
+        return render(request, 'cadastro.html')
+    elif request.method == "POST":
+        return HttpResponse(recebido)
+
+Observe que para o cadastro apenas precisaremos do get para entregar a página cadastro.html e depois do post para pegar os dados que foram escritos no formulário que está disponibilizado no arquivo cadastro.html
+Mas, ainda não temos definido no cadastro.html como/onde utilizaremos o POST, por isso devemos devemos dentro do form criar um action que definirá para onde irão as informações escritas naquele form:
+
+    <form action ="{%url 'cadastro' %}" method ="POST">
+
+Ao darmos f5 tudo funcionará perfeitamente, pois estamos fazendo um GET que está certo, mas se tentarmos apertar o botão CADASTRAR, veremos um erro de :
+
+    '''
+    Forbidden (403)
+    CSRF verification failed. Request aborted.
+
+    You are seeing this message because this site requires a CSRF cookie when submitting forms. This cookie is required for security reasons, to    ensure that your browser is not being hijacked by third parties.
+
+    If you have configured your browser to disable cookies, please re-enable them, at least for this site, or for “same-origin” requests.
+    def cadastro(request):
+    '''
+    Esse é um erro  de cross side request foreign, o que seria mais ou menos uma tentativa de falsificação de formulário. Então, caso não estivéssemos usando o djando, nós deveríamos nos preocupar com uma série de coisas para deixar o nosso sistema seguro, mas no django ele já toma conta de tudo para nós.
+    Para resolver o problema basta:
+
+    <form action ="{%url 'cadastro' %}" method ="POST">{% csrf _token%}
+
+    Ao, com o apertar do botão CADASTRAR, executar o POST, a página nos devolve a string "recebido" , podendo nos devolver outra página se quisermos configurar.
+    Com as informações do form, podemos trabalhar com as variáveis dentro do framework do django com os nomes extraídos do form dentro de cadastro.html:
+        username
+        password
+        confirm-password
     
+def cadastro(request):
+    if request.method == "GET":
+        return render(request, 'cadastro.html')
+    elif request.method == "POST":
+        username = request.POST.get('username')
+        senha = request.POST.get('password')
+        confirmar_senha = request.POST.get('confirm-password')
+        #print (f"{username}|{senha}|{confirmar-password}")
+        return HttpResponse('Recebido')
+
+Ao escrevermos os valores no formulário, ele retorna a impressão no terminal do vscode
+
+9ºpasso - fazer validações
+
+    1º ver se senha e confirmar_senha são iguais e se não forem, devemos redirecionar para a página de cadastro com um outro import do shortcuts chamado redirect.
+
+    form django.shortcus impor render,redirect
+
+        if not senha == confirmar_senha:
+            return redirect("/auth/cadastro")
+
+    2º verificar se o username e/ou senha são vazios ou espaços em branco(strip)
+
+        if len(username.strip()) ==0 or len(senha.strip())==0:
+            return redirect("/auth/cadastro")
+
+    3º verificar se o usuário já existe
+        O django já traz pra nós um app de autenticação chamado auth, então a gnt não precisa criar do zero um app de autenticação.
+        Para trazê-lo para a sua aplicação usamos no autenticacao/views.py o import de 
+
+            from django.contrib.auth.models import User 
+
+        Esse import vem do PSW3.0\venv\Lib\site-packages\django\contrib\auth\models.py em uma classe chamada de User. Essa classe é uma "model", ou seja ela referencia o nosso bd, então é possível acessar o bd para verificar a existência de um usuário no bd.
+
+        user = User.objects.filter(username = username)
+        if user.exists:
+            return redirect("/auth/cadastro")
+
+        percebe-se que esse lógica acima ainda não funciona, pois ainda não criamos essas tabelas no bd e nem precisamos, o próprio django cria e apenas nos passa o arquivo(PS3.0/db.sqlite3) que salvará todas as migrações de db necessárias.
+        Um aplicativo desktop bom para verificar e explorar bases de dados do sqlite é o DbBrowser, ao utilizá-lo para verificar o arquivo PS3.0/db.sqlite3 verificamos que não existe nenhuma tabela criada dentro do arquivo do sqlite.
+        Como dito o Django cria essas tabelas automaticamente e como temos o app django.contrib.auth as tabelas reacionadas com esse app já são criadas através de um comando no prompt definido abaixo:
+
+        $ python manager.py migrate
+        *No powershell deu erro de acesso ao python que não era o venv, então abri um prompt de git bash e executei um venv e funcionou
+
+        Agora, ao dar F5 no dbbrowser vemos que foram criadas 11 tabelas linkadas com o app de auth do django.
+        Uma dessas tabelas é o auth_user que tem várias coisas como pass, last_login, is_superuser,username etc.
+        É esse username que utilizamos para verificar se o usuário já existe no sistema.
+
+        Um outro comando interessante é o de criação de um superusuário
+
+            python3 manage.py createsuperuser
+
+        são perguntados os dados desse superuser e é criado o superuser.
+        Se olharmos no dbBrowser podemos enxergar esse superuser
+        dadau/dadau
+
+        Há uma url em freewlaway/urls.py que já vem como padrão para podermos acessar que é a do caminho "admin/". Essa url permite os superusers(usuários q são superuser) acessarem e gerirem todo o sistema. 
+
+10º passo - salvar o dado no banco de dados
+
+A gnt vai criar um try para tratar a execessão que pode ocorrer durante a inserção de algo no banco de dados
+
+
+
