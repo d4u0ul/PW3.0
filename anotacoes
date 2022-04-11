@@ -575,3 +575,20 @@ Então devemos em todos os apps antes de exibir a tela, ou seja de entregar uma 
 
     if request.user.isauthenticated:
         return redirect('/plataforma')
+
+16º passo - relizar o logout do usuário criando uma url para STATIC_ROOT
+Nós criamos o cadastro/, login/, e agora vamos criar o sair/ nos paths do urlpatterns em autenticacao.urls.py
+
+    urlpatterns=[
+        ...
+        path('/sair', views.sair,name="sair")
+    ]
+e criamos dentro de views a função sair
+
+def sair(request):
+    auth.logout(request) #realmente faz o logout retirando da memória do navegador os cokies que ainda mantinham o usuário logado
+    return redirect ('/auth/login') #manda para a página de login
+
+Se tentarmos logar de novo agora conseguiremos tranquilamente, pois o usuário fi realmente deslogado com sistema com auth.logout()
+
+
