@@ -1,7 +1,8 @@
 from django.contrib.auth.models import User
 from django.shortcuts import render,redirect
 from django.http import HttpResponse
-
+from django.contrib import messages
+from django.contrib.messages import constants
 # Create your views here.
 '''
 arquivo views, onde vai ficar a lógica da nossa aplicação, onde fica toda aquela parte onde recebemos uma request e retornamos uma response, logo pegar o nome do usuário e verificar se ele existe, ou um e-mail/senha válido/inválido todo esse processamento fica aqui.
@@ -18,13 +19,16 @@ def cadastro(request):
         
         #validações para o cadastro
         if not senha == confirmar_senha:
+            messages.add_message(request,constants.ERROR, 'As senhas não coincidem')
             print("erro de senha diferente da confirmação")
             return redirect("/auth/cadastro")
         if len(username.strip())==0 or len(senha.strip())==0:
+            messages.add_message(request,constants.ERROR, 'user/senha vazios')
             print("user/senha vazios")
             return redirect("/auth/cadastro")
         user = User.objects.filter(username = username)
         if user.exists() :
+            messages.add_message(request,constants.ERROR, f"erro de usuário {username} já cadastrado")
             print(f"erro de usuário {username} já cadastrado")
             return redirect("/auth/cadastro")
         
@@ -35,6 +39,8 @@ def cadastro(request):
 
             return redirect("/auth/login")
         except:
+            
+            messages.add_message(request,constants.ERROR, 'erro interno do sistema')
             return redirect("/auth/cadastro")
 
 

@@ -461,6 +461,58 @@ Ao escrevermos os valores no formulário, ele retorna a impressão no terminal d
 10º passo - salvar o dado no banco de dados
 
 A gnt vai criar um try para tratar a execessão que pode ocorrer durante a inserção de algo no banco de dados
+para inserir usamos o método de objects chamado create_user e passamos o nome do usuário e a senha capturada pelo forms, então dentro do try colocamos
 
+    user = User.objects.create_user(username = username, password = senha)
 
+e depois mandamos salvar no bd
+
+    user.save()
+
+caso dê errado e o except entre em ação, podemos apenas voltar para a página de cadastro ou se quisermos, podemos criar uma página de erros que pode ser redirecionada sempre que precisarmos.
+
+11º redirecionar para a página de login no botão de login de cadastro.html
+
+é só modificar o valor de 
+    
+    <a href ="#"class "btn btn-primary btn-lg">LOGIN</a>
+    
+    para 
+    
+    <a href "{% url 'login'%}" class "btn btn-primary btn-lg">LOGIN</a>
+
+12º preparando as mensagens de erro>:
+
+A página de se increver quando cometemos erros não está mostrando qual o erro que está acontecendo e o django tem por padrão um app para trabalhar com essas menssagens, precisando apenas adicionar no arquivo freewlaway/settings.py a tag de menssagem:
+
+   
+    from django.contrib.messages import constants
+
+    MESSAGE_TAGS = {
+    constants.DEBUG: 'alert-primary',
+    constants.ERROR: 'alert-danger',
+    constants.SUCCESS: 'alert-success',
+    constants.INFO: 'alert-info',
+    constants.WARNING: 'alert-warning',
+    }
+
+Se verificarmos no site oficial do bootstrap, já temos alertas muito bem feitos como padrão no bootstrap
+Então pra cada local dentro de views.cadastro() que pode ocorrer um erro, nós teremos que adicionar a mensagem correspondente ao erro, por exemplo:
+
+    from django.contrib import messages
+    from django.contrib.messages import constants
+    
+    if not senha == confirmar_senha:                                               #esse if e todos os outros           
+        messages.add_message(request,constants.ERROR, 'As senhas não coincidem')
+        return redirect('/auth/cadastro')
+    #...
+Mas o html ainda não mostra esse erro na tela, para isso devemos ir em cadastro.html e exibir essas mensagens através de umas tags do djangoo dentro do arquivo html:
+
+    {% if messages %}                               #if no django
+        {% for message in messages %}               #for no django
+            <div class="alert {{message.tags}}">    #impressão no django
+                {{message}}                         #msg
+            </div>                                  #fecha impressão
+        {% endfor %}                                #fecha for
+    {% endif %}                                     #fecha if
 
