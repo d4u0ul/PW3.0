@@ -550,3 +550,24 @@ Agora cria-se a página em autenticacao/login.html e desenvolve-se o código htm
 
 Perceba que o login.html tem o mesmo css do cadastro.html pq eles são bem parecidos 
 
+14º passo autenticação do usuário
+
+para fazer a autenticação do usuário, precisamos colocar no views.login() a lógica de fazer algo quando receber a requisição GET e POST, send quando receber o GET em login entregar a página login.html e quando receber o POST verificar se o usuário existe de verdade.
+Logo, criamos um objeto "user" com um método que retorna um objeto caso ele ache alguém com esse usuário e senha
+
+        usuario = auth.authenticate(username=username, password=senha)
+
+Se o usuário retornar NULL, exiba a mensagem 
+
+        if not usuario:
+            messages.add_message(request,constants.ERROR, 'usuário ou senha inválidos')
+            return redirect("/auth/login")
+
+Se o usuário retornar um objeto, faça o login e retorna uma string recebido
+
+        else:
+            auth.login(request, usuario)
+            return redirect("/plataforma")
+
+
+
