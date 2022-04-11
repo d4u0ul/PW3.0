@@ -122,6 +122,7 @@ Ao criar um app, devemos informar ao Django da criação deste app nos arquivos
 
     * freewlaway/settings.py adicionando na tag Application definition os INSTALLED_APPS
 
+
         INSTALLED_APPS = [
             'django.contrib.admin',                                     #app que já vem como padrão no Django    
             'django.contrib.auth',                                      #app que já vem como padrão no Django    
@@ -152,6 +153,7 @@ Ao criar um app, devemos informar ao Django da criação deste app nos arquivos
             -model: arquivo model onde vai ficar uma camada da aplicação, ou seja um arquivo onde vai ficar separado tudo que for relacionado a conexão,pesquisa, inserção de banco de dados
             -view: arquivo view, onde vai ficar a lógica da nossa aplicação, onde fica toda aquela parte onde recebemos uma request e retornamos uma response, logo pegar o nome do usuário e verificar se ele existe, ou um e-mail/senha válido/inválido todo esse processamento fica aqui.
             -template: arquivo template, que é de fato a interface que o usuário vai receber as informações que no nosso caso, seria o html, onde se tem imagens, botões, campos para o usuário interagir.
+
         * Quando um usuário acessa uma rota, eu quero que ele seja redirecionado para uma view que é uma função do python que vai receber uma requisição pedida do usuário e vai devolver um response com o conteúdo do que o usuário pediu como resposta, logo devemos fazer o import do arquivo views para dentro o autenticacao/urls.py
 
             from django.urls import path
@@ -163,12 +165,13 @@ Ao criar um app, devemos informar ao Django da criação deste app nos arquivos
         
     *autenticacao/views.py - não devemos esquecer de criar a função cadastro dentro da views.py que é a função que deve retornar o response da request no path auth/cadastro
 
-        from django.http import HttpResponse #é preciso iportar o response da função cadastro
 
+        from django.http import HttpResponse #é preciso iportar o response da função cadastro
         def cadastro(request):
             return HttpResponse('cadastro')
 
 Vamos ver se está funcionando:
+
 Após isso, rodamos o servidor de novo e podemos testar no navegador outra vez
 Ao acessarmos a página vazio(http://127.0.0.1:8000/) não funciona nada, pois não configuramos para que o django pudesse exibir algo nessa url.
 Se acessarmos a página auth/(http://127.0.0.1:8000/auth/) também não funciona pois não criamos nenhuma view para este caminho, na realidade este caminho só direciona para autenticacao/urls.py 
@@ -590,5 +593,3 @@ def sair(request):
     return redirect ('/auth/login') #manda para a página de login
 
 Se tentarmos logar de novo agora conseguiremos tranquilamente, pois o usuário fi realmente deslogado com sistema com auth.logout()
-
-
