@@ -11,6 +11,8 @@ arquivo views, onde vai ficar a lógica da nossa aplicação, onde fica toda aqu
 
 def cadastro(request):
     if request.method == "GET":
+        if request.user.is_authenticated:
+            return redirect('/plataforma')
         return render(request, 'cadastro.html')
     elif request.method == "POST":
         username = request.POST.get('username')
@@ -51,6 +53,8 @@ def cadastro(request):
 def login(request):
     #return HttpResponse('login') # quando eu acessar no meu navegador a rota 'auth/login', ele deve me retornar a resposta 'login'
     if request.method == "GET":
+        if request.user.is_authenticated:
+            return redirect('/plataforma')
         return render(request,"login.html")
     elif request.method == "POST":
         username = request.POST.get("username")

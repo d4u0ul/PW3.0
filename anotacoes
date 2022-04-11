@@ -569,5 +569,9 @@ Se o usuário retornar um objeto, faça o login e retorna uma string recebido
             auth.login(request, usuario)
             return redirect("/plataforma")
 
+15º passo - verificar se o usuário já está logado
+Se o usuário tentar acessar de novo, mesmo logado no sistema, ele consegue acessar a página de login
+Então devemos em todos os apps antes de exibir a tela, ou seja de entregar uma página pedida pelo GET, devemos verificar se o usuário já não está logado. Como atpe agora só temos o app autenticacao, colocamos nas 2 funções (cadastro(),login())do seu views .
 
-
+    if request.user.isauthenticated:
+        return redirect('/plataforma')
