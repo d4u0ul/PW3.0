@@ -24,7 +24,7 @@ def cadastro(request):
             print("user/senha vazios")
             return redirect("/auth/cadastro")
         user = User.objects.filter(username = username)
-        if user.exists():
+        if user.exists() :
             print(f"erro de usuário {username} já cadastrado")
             return redirect("/auth/cadastro")
         
