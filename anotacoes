@@ -516,3 +516,37 @@ Mas o html ainda não mostra esse erro na tela, para isso devemos ir em cadastro
         {% endfor %}                                #fecha for
     {% endif %}                                     #fecha if
 
+13º passo criação do login.html
+primeiro devemos ir em view e consertar o return da função login() para o retorno de uma página html
+
+    login():
+        return render(request,"login.html") 
+
+Agora cria-se a página em autenticacao/login.html e desenvolve-se o código html
+
+    {% extends 'base.html' %}
+    {% load static %}
+
+    {% block 'head' %}
+    <link rel="stylesheet" href="{% static 'autenticacao/css/cadastro.css' %}">
+    {% endblock %}
+
+    {% block 'body' %}
+    <div class="box">
+        <form action="{% url 'login' %}" method="post">{% csrf_token %}
+            <h1 class="titulo font-degrade borda-bottom-degrade">LOGIN</h2>
+                <br>
+                <span class="span-descricao">Nome de usuário:</span>
+                <input type="text" class="form-control input-cadastro" name="username">
+                <br>
+                <span class="span-descricao">Senha:</span>
+                <input type="password" class="form-control input-cadastro" name="password">
+                <br>
+                <input type="submit" value="LOGIN" class="btn btn-success btn-lg">
+                <a href="{% url 'cadastro' %}" class="btn btn-primary btn-lg">CADASTRO</a>
+        </form>
+    </div>
+    {% endblock %}
+
+Perceba que o login.html tem o mesmo css do cadastro.html pq eles são bem parecidos 
+

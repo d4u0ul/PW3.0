@@ -48,4 +48,7 @@ def cadastro(request):
         return HttpResponse('Recebido')
 
 def login(request):
-    return HttpResponse('login') # quando eu acessar no meu navegador a rota 'auth/login', ele deve me retornar a resposta 'login'
+    #return HttpResponse('login') # quando eu acessar no meu navegador a rota 'auth/login', ele deve me retornar a resposta 'login'
+
+    return render(request,"login.html")
+
